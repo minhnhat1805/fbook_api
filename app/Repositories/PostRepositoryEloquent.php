@@ -26,6 +26,8 @@ class PostRepositoryEloquent extends AbstractRepositoryEloquent implements PostR
     {
         $posts = $this->model()
                 ->select($dataSelect)
+                ->where('priority', '>', 0)
+                ->orderBy('priority', 'ASC')
                 ->orderBy('id', 'DESC')
                 ->limit(config('model.post.limit'))
                 ->get();
@@ -38,6 +40,8 @@ class PostRepositoryEloquent extends AbstractRepositoryEloquent implements PostR
         $posts = $this->model()
             ->select($dataSelect)
             ->with($with)
+            ->where($data)
+            ->orderBy('priority', 'DESC')
             ->orderBy('created_at', 'ASC')
             ->paginate(config('paginate.default'));
 
@@ -85,6 +89,7 @@ class PostRepositoryEloquent extends AbstractRepositoryEloquent implements PostR
                     'title' => $data['title'],
                     'slug' => $slug,
                     'content' => $data['content'],
+                    'public' => $data['public'],
                     'created_at' => date('Y-m-d H:i:s'),
                     ]);
     }
@@ -119,6 +124,7 @@ class PostRepositoryEloquent extends AbstractRepositoryEloquent implements PostR
             'title' => $data['title'],
             'slug' => $slug,
             'content' => $data['content'],
+            'public' => $data['public'],
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
     }
@@ -142,5 +148,39 @@ class PostRepositoryEloquent extends AbstractRepositoryEloquent implements PostR
         }
 
         return $text;
+    }
+
+    public function changePriority(Post $post, $dataSelect = ['*'])
+    {
+        if ($post->priority == 0) {
+            $temp = $this->model()
+                ->select('priority')
+                ->orderBy('priority', 'DESC')
+                ->first()->priority;
+            $post->update([
+                'priority' => $temp + 1,
+                'public' => 1,
+            ]);
+        } else {
+            $posts = $this->model()
+                ->select($dataSelect)
+                ->where('priority', '>', $post->priority)
+                ->get();
+            foreach ($posts as $item) {
+                $item->update([
+                    'priority' => $item->priority - 1,
+                ]);
+            }
+            $post->update([
+                'priority' => 0,
+            ]);
+        }
+    }
+
+    public function changeStatus(Post $post)
+    {
+        $post->update([
+            'public' => !$post->public,
+            ]);
     }
 }

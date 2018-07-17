@@ -134,7 +134,7 @@ class HomeController extends ApiController
     public function getListPost()
     {
         return $this->getData(function () {
-            $this->compacts['items'] = $this->postRepository->getData();
+            $this->compacts['items'] = $this->postRepository->getData(['public' => 1]);
         });
     }
 
