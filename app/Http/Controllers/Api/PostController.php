@@ -104,4 +104,22 @@ class PostController extends ApiController
             $this->compacts['items'] = $this->reFormatPaginate($data);
         });
     }
+
+    public function changePriority($id)
+    {
+        return $this->doAction(function () use ($id) {
+            $post = $this->repository->findOrFail($id);
+
+            $this->repository->changePriority($post);
+        });
+    }
+
+    public function changeStatus($id)
+    {
+        return $this->doAction(function () use ($id) {
+            $post = $this->repository->findOrFail($id);
+
+            $this->repository->changeStatus($post);
+        });   
+    }
 }

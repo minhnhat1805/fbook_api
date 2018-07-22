@@ -20,4 +20,8 @@ interface PostRepository extends AbstractRepository
     public function update(Post $post, array $data);
 
     public function destroy(Post $post);
+
+    public function changePriority(Post $post, $dataSelect = ['*']);
+
+    public function changeStatus(Post $post);
 }

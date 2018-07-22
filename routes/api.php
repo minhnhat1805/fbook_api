@@ -113,6 +113,8 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::resource('posts', 'PostController');
         Route::post('posts/update/{id}', 'PostController@updatePost');
         Route::post('posts/search', 'PostController@searchPostByTitle');
+        Route::post('posts/priority/{id}', 'PostController@changePriority');
+        Route::post('posts/public/{id}', 'PostController@changeStatus');
         Route::resource('logs', 'LogController', [
             'only' => ['index']
         ]);

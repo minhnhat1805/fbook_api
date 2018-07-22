@@ -18,6 +18,8 @@ class Post extends Model
         'title',
         'slug',
         'content',
+        'priority',
+        'public',
         'created_at',
         'updated_at'
     ];
